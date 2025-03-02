@@ -12,7 +12,13 @@ module.exports = {
           200: "#E7EAEA", // Jeszcze ciemniejszy
           300: "#DFE2E2", // Najciemniejszy
         },
-        secondary: "#D1DEE5",
+        secondary: {
+          DEFAULT: "#D1DEE5", // Środkowy odcień
+          100: "#E6EFF3", // Najjaśniejszy
+          200: "#DCE7ED", // Jaśniejszy
+          300: "#B8C7D1", // Ciemniejszy
+          400: "#9FAAB5", // Najciemniejszy
+        },
         myGreen: "#69B684",
         myRed: "#DC666A",
       },
