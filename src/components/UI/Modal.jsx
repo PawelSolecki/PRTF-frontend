@@ -1,35 +1,37 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-export default function Modal({ children, onClose, styles = "" }) {
+export default function Modal({ children, onClose, styles }) {
   const dialog = useRef();
-  //TODO, PROD to do usuniecia
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const modal = dialog.current;
 
-    //TODO, PROD to do usuniecia
     if (!isOpen) {
       modal.showModal();
-      setIsOpen(true); // Ustawiamy flagę, że modal już się pokazał
+      setIsOpen(true);
     }
 
     return () => {
-      //TODO, PROD (to nie dziala w dev przez StrictMode)
-      //modal.close()
+      // modal.close();
     };
   }, [isOpen]);
 
   return createPortal(
-    <dialog
-      className={styles}
-      ref={dialog}
-      onClose={onClose}
-      onCancel={onClose}
-    >
-      {children}
-    </dialog>,
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-[1px] flex justify-center items-center z-50">
+      <dialog
+        className={
+          styles ??
+          "border-secondary border-2 rounded-[15px] shadow-sm p-8 bg-white"
+        }
+        ref={dialog}
+        onClose={onClose}
+        onCancel={onClose}
+      >
+        {children}
+      </dialog>
+    </div>,
     document.getElementById("modal")
   );
 }
