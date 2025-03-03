@@ -1,6 +1,7 @@
 import HoldingItem from "./HoldingItem";
 //TODO: Lepsze ikonki
 import AddIcon from "../../assets/AddIcon.png";
+import { Link } from "react-router-dom";
 
 const mockHoldings = [
   {
@@ -48,9 +49,12 @@ export default function HoldingsList() {
       <div className="p-4 border-t border-gray-200 flex items-center gap-2">
         {/* TODO: podmieniac ikonke na hover (zmieniac kolor) */}
         <img src={AddIcon} />
-        <labe className="text-accent underline font-medium hover:text-secondary-400 cursor-pointer">
+        <Link
+          to="add"
+          className="text-accent underline font-medium hover:text-secondary-400 cursor-pointer"
+        >
           Dodaj nowe aktywa
-        </labe>
+        </Link>
       </div>
     </div>
   );

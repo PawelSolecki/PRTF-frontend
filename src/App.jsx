@@ -4,15 +4,30 @@ import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
 import PortfolioPage from "./pages/PortfolioPage";
 import LoginPage from "./pages/LoginPage";
+import AddHolding, {
+  loader as addHoldingLoader,
+  action as addHoldingAction,
+} from "./components/portfolio/AddHolding";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <RootPage />,
-    errorElement: <ErrorPage />,
+    // errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: "portfolio/:portfolioId", element: <PortfolioPage /> },
+      {
+        path: "portfolio/:portfolioId",
+        element: <PortfolioPage />,
+        children: [
+          {
+            path: "add",
+            element: <AddHolding />,
+            // loader: addHoldingLoader,
+            // action: addHoldingAction,
+          },
+        ],
+      },
       { path: "login", element: <LoginPage /> },
     ],
   },

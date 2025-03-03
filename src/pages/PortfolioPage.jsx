@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { Outlet, useParams } from "react-router";
 import PortfolioContent from "../components/portfolio/PortfolioContent";
 
 export default function PortfolioPage() {
@@ -6,6 +6,7 @@ export default function PortfolioPage() {
   return (
     <>
       <PortfolioContent />
+      <Outlet />
     </>
   );
 }
