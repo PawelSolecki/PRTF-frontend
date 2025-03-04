@@ -10,6 +10,7 @@ import AddHolding, {
 } from "./components/portfolio/AddHolding";
 import HoldingInfo from "./components/portfolio/HoldingInfo";
 import TransactionForm from "./components/portfolio/TransactionForm";
+import HoldingTransaction from "./components/portfolio/HoldingTransaction";
 
 const router = createBrowserRouter([
   {
@@ -33,12 +34,8 @@ const router = createBrowserRouter([
             element: <HoldingInfo />,
           },
           {
-            path: "buy",
-            element: <TransactionForm type="buy" />,
-          },
-          {
-            path: "sell",
-            element: <TransactionForm type="sell" />,
+            path: "transaction",
+            element: <HoldingTransaction />,
           },
         ],
       },

@@ -30,13 +30,10 @@ export default function HoldingItem({ name, symbol, quantity, value, change }) {
         <Link to="info" className="text-blue-600 hover:text-blue-800">
           Info
         </Link>
-        <Link to="buy" className="text-green-600 hover:text-green-800">
-          Kup
+        <Link to="transaction">
+          <span className="text-myGreen">Kup</span>/
+          <span className="text-myRed">Sprzedaj</span>
         </Link>
-        <Link to="sell" className="text-red-600 hover:text-red-800">
-          Sprzedaj
-        </Link>
-        <button className="text-gray-600 hover:text-gray-800">Edytuj</button>
       </td>
     </tr>
   );
