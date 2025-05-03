@@ -59,7 +59,7 @@ export const useApi = ({
       requiresAuth,
       customMessages,
       options,
-      accessToken, // <== przekazuj token
+      accessToken,
     });
 
   if (isGet) {

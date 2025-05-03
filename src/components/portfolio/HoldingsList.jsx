@@ -22,7 +22,14 @@ const mockHoldings = [
   },
 ];
 
-export default function HoldingsList() {
+export default function HoldingsList({ holdings }) {
+  if (!holdings) {
+    return (
+      <div className="bg-white rounded-[15px] border-2 overflow-hidden">
+        <p className="text-center text-gray-500 p-4">Brak aktywów w portfelu</p>
+      </div>
+    );
+  }
   return (
     <div className="bg-white rounded-[15px] border-2 overflow-hidden">
       <table className="w-full">
@@ -41,7 +48,7 @@ export default function HoldingsList() {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {mockHoldings.map((holding) => (
+          {holdings.map((holding) => (
             <HoldingItem key={holding.id} {...holding} />
           ))}
         </tbody>

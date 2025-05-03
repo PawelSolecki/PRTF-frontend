@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
-export default function HoldingItem({ name, symbol, quantity, value, change }) {
-  const isPositive = change.startsWith("+");
+export default function HoldingItem({
+  name,
+  ticker,
+  totalQuantity,
+  pricePerUnit,
+}) {
+  const isPositive = true;
 
   return (
     <tr className="hover:bg-basic-100">
@@ -9,22 +14,22 @@ export default function HoldingItem({ name, symbol, quantity, value, change }) {
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-accent">
         <div className="inline-block bg-secondary rounded-[15px] px-3 p-1">
-          {symbol}
+          {ticker}
         </div>
       </td>
 
       <td className="px-6 py-4 whitespace-nowrap text-sm text-accent">
-        {quantity}
+        {totalQuantity}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-accent">
-        {value}
+        {pricePerUnit}
       </td>
       <td
         className={`px-6 py-4 whitespace-nowrap text-sm ${
           isPositive ? "text-green-600" : "text-red-600"
         }`}
       >
-        {change}
+        0.0
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm space-x-4">
         <Link to="info" className="text-blue-600 hover:text-blue-800">
