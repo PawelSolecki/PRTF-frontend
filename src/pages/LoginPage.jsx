@@ -24,12 +24,10 @@ export default function LoginPage() {
   const handleLogin = async ({ email, password }) => {
     try {
       const response = await login({ email, password });
-      console.log("Login response:", response);
+
       setAccessToken(response.access_token);
       navigate("/");
-    } catch (error) {
-      console.error("Login failed", error);
-    }
+    } catch (error) {}
   };
   return (
     <>

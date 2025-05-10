@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-export default function Frame({ label, value, isLoading = false }) {
+export default function Frame({ label, isLoading = false, children }) {
   // Usuń tę linię na produkcji
   // isLoading = true;
 
@@ -34,7 +34,7 @@ export default function Frame({ label, value, isLoading = false }) {
           </div>
         </div>
       ) : (
-        <span className="text-3xl font-semibold">{value}</span>
+        children
       )}
     </div>
   );

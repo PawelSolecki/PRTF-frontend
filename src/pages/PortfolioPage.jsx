@@ -13,8 +13,7 @@ export default function PortfolioPage() {
       default: "Nie udało się pobrać portfolio",
     },
   });
-  console.log("portfolio", portfolio);
-  console.log("isLoading", isLoading);
+
   return (
     <>
       <PortfolioContent portfolio={portfolio} isLoading={isLoading} />

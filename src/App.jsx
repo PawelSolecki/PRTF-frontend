@@ -27,7 +27,7 @@ const router = createBrowserRouter([
             path: "add",
             element: <AddHolding />,
             // loader: addHoldingLoader,
-            // action: addHoldingAction,
+            action: addHoldingAction,
           },
           {
             path: "info",

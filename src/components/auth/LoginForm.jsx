@@ -3,7 +3,7 @@ export default function LoginForm({ onSubmit }) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
-    console.log("Form data:", data);
+
     onSubmit(data);
   };
 

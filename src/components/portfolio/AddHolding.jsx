@@ -1,8 +1,8 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, redirect, useNavigate, useParams } from "react-router-dom";
 import Modal from "../UI/Modal.jsx";
 import HoldingForm from "./HoldingForm.jsx";
+import { useApi } from "../../hooks/useApi.js";
 
-// AddHolding.jsx
 export default function AddHolding() {
   const navigate = useNavigate();
   const { portfolioId } = useParams(); // Dodaj to
@@ -14,13 +14,88 @@ export default function AddHolding() {
 
   return (
     <Modal onClose={handleClose}>
-      <HoldingForm>
+      <HoldingForm action={`/portfolio/${portfolioId}/add`}>
         <Link to={`/portfolio/${portfolioId}`}>Anuluj</Link>
-        <button>Potwierdz</button>
+        <button type="submit">Potwierdz</button>
       </HoldingForm>
     </Modal>
   );
 }
 
 export function loader({ params }) {}
-export async function action({ request, params }) {}
+export async function action({ request, params }) {
+  console.log("action", params);
+  const data = await request.formData();
+
+  const assetData = {
+    portfolioId: params.portfolioId,
+    type: data.get("type"),
+    name: data.get("name"),
+    broker: data.get("broker"),
+    currency: data.get("currency"),
+    pricePerUnit: data.get("pricePerUnit"),
+    market: data.get("market"),
+    ticker: data.get("ticker"),
+  };
+
+  const assetsResponse = await fetch(`http://localhost:8090/api/v1/asset`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(assetData),
+  });
+  console.log("assetsResponse", assetsResponse);
+
+  if (!assetsResponse.ok) {
+    return new Response(
+      JSON.stringify({
+        message: "Nie udało się dodać aktywa",
+      }),
+      {
+        status: 500,
+      }
+    );
+  }
+  console.log("Wszystkie nagłówki:");
+  assetsResponse.headers.forEach((value, name) => {
+    console.log(`${name}: ${value}`);
+  });
+  const transactionData = {
+    assetId: assetsResponse.headers.get("location").split("/").pop(),
+    type: "BUY",
+    quantity: data.get("quantity"),
+    pricePerUnit: data.get("pricePerUnit"),
+    date: `${data.get("date")}:00.000`,
+  };
+  const transactionsResponse = await fetch(
+    `http://localhost:8090/api/v1/transaction`,
+
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(transactionData),
+    }
+  );
+
+  if (!transactionsResponse.ok) {
+    return new Response(
+      JSON.stringify({
+        message: "Nie udało się dodać aktywa",
+      }),
+      {
+        status: 500,
+      }
+    );
+  }
+
+  if (assetsResponse.ok && transactionsResponse.ok) {
+    return { assetsResponse, transactionsResponse };
+  }
+
+  return redirect(`/portfolio/${params.portfolioId}`);
+}

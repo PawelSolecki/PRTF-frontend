@@ -7,15 +7,19 @@ export default function PortfolioSummary({ name, totalValue, isLoading }) {
         {isLoading ? "Ładowanie..." : name}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Frame
-          label="Wartość rynkowa"
-          value={totalValue}
-          isLoading={isLoading}
-        />
-        <Frame label="Koszt" value="... PLN" isLoading={isLoading} />
-        <Frame label="Przychód" value="... PLN" isLoading={isLoading} />
+        <Frame label="Wartość rynkowa" isLoading={isLoading}>
+          <span className="text-3xl font-semibold">{totalValue}</span>
+        </Frame>
+        <Frame label="Koszt" isLoading={isLoading}>
+          <span className="text-3xl font-semibold">TBD</span>
+        </Frame>
+        <Frame label="Przychód" isLoading={isLoading}>
+          <span className="text-3xl font-semibold">... PLN</span>
+        </Frame>
         {/* TODO: dodać strzałkę góra/dół */}
-        <Frame label="Przychód (%)" value="4,76 %" isLoading={isLoading} />
+        <Frame label="Przychód (%)" isLoading={isLoading}>
+          <span className="text-3xl font-semibold">4.20%</span>
+        </Frame>
       </div>
     </section>
   );
