@@ -1,3 +1,4 @@
+import { useState } from "react";
 import HoldingItem from "./HoldingItem";
 //TODO: Lepsze ikonki
 import AddIcon from "../../assets/AddIcon.png";
@@ -23,6 +24,12 @@ const mockHoldings = [
 ];
 
 export default function HoldingsList({ holdings }) {
+  const [expandedItemId, setExpandedItemId] = useState(null);
+
+  const toggleExpand = (id) => {
+    setExpandedItemId(expandedItemId === id ? null : id);
+  };
+
   if (!holdings) {
     return (
       <div className="bg-white rounded-[15px] border-2 overflow-hidden">
@@ -49,13 +56,18 @@ export default function HoldingsList({ holdings }) {
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {holdings.map((holding) => (
-            <HoldingItem key={holding.id} {...holding} />
+            <HoldingItem
+              key={holding.id}
+              {...holding}
+              isExpanded={expandedItemId === holding.id}
+              onToggleExpand={() => toggleExpand(holding.id)}
+            />
           ))}
         </tbody>
       </table>
       <div className="p-4 border-t border-gray-200 flex items-center gap-2">
         {/* TODO: podmieniac ikonke na hover (zmieniac kolor) */}
-        <img src={AddIcon} />
+        <img src={AddIcon} alt="Add icon" />
         <Link
           to="add"
           className="text-accent underline font-medium hover:text-secondary-400 cursor-pointer"

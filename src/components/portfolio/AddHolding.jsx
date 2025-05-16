@@ -58,10 +58,7 @@ export async function action({ request, params }) {
       }
     );
   }
-  console.log("Wszystkie nagłówki:");
-  assetsResponse.headers.forEach((value, name) => {
-    console.log(`${name}: ${value}`);
-  });
+
   const transactionData = {
     assetId: assetsResponse.headers.get("location").split("/").pop(),
     type: "BUY",
@@ -91,10 +88,6 @@ export async function action({ request, params }) {
         status: 500,
       }
     );
-  }
-
-  if (assetsResponse.ok && transactionsResponse.ok) {
-    return { assetsResponse, transactionsResponse };
   }
 
   return redirect(`/portfolio/${params.portfolioId}`);
