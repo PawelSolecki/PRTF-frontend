@@ -2,12 +2,12 @@ import PortfolioSummary from "./PortfolioSummary";
 import PortfolioHoldings from "./PortfolioHoldings";
 import PortfolioDetails from "./PortfolioDetails";
 export default function PortfolioContent({ portfolio, isLoading }) {
-  console.log("portfolio", portfolio);
   return (
     <>
       <PortfolioSummary
         name={portfolio?.name}
-        totalValue={portfolio?.totalValue}
+        // totalValue={portfolio?.totalValue}
+        totalValue={100}
         holdings={portfolio?.assets}
         isLoading={isLoading}
       />

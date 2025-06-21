@@ -21,6 +21,15 @@ import HoldingTransaction, {
   action as transactionAction,
 } from "./components/portfolio/HoldingTransaction";
 
+import {
+  loader as transactionLoader,
+  action as transactionDeleteAction,
+} from "./components/portfolio/TransactionHistory";
+
+import AddFunds from "./components/portfolio/AddFunds";
+
+import { action as assetAction } from "./components/portfolio/AssetDetails";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -31,6 +40,7 @@ const router = createBrowserRouter([
       {
         path: "portfolio/:portfolioId",
         element: <PortfolioPage />,
+
         children: [
           {
             path: "add",
@@ -55,10 +65,31 @@ const router = createBrowserRouter([
             action: deleteHoldingAction,
             loader: deleteHoldingLoader,
           },
+          {
+            path: "add-funds",
+            element: <AddFunds />,
+          },
         ],
       },
       { path: "login", element: <LoginPage /> },
     ],
+  },
+  {
+    path: "/api/assets/:assetId",
+    action: assetAction,
+  },
+  {
+    path: "/api/transactions/asset/:assetId",
+    loader: transactionLoader,
+  },
+
+  {
+    path: "/api/transactions/:transactionId",
+    action: transactionDeleteAction,
+  },
+  {
+    path: "/api/transactions", // Dodaj nową ścieżkę dla usuwania wielu transakcji
+    action: transactionDeleteAction,
   },
 ]);
 

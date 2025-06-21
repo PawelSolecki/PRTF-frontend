@@ -4,25 +4,6 @@ import HoldingItem from "./HoldingItem";
 import AddIcon from "../../assets/AddIcon.png";
 import { Link } from "react-router-dom";
 
-const mockHoldings = [
-  {
-    id: 1,
-    name: "Apple Inc",
-    symbol: "AAPL",
-    quantity: 4,
-    value: "240,50 PLN",
-    change: "+0,9%",
-  },
-  {
-    id: 2,
-    name: "Apple Inc",
-    symbol: "AAPL",
-    quantity: 4,
-    value: "240,50 PLN",
-    change: "+0,9%",
-  },
-];
-
 export default function HoldingsList({ holdings }) {
   const [expandedItemId, setExpandedItemId] = useState(null);
 

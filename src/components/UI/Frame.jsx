@@ -1,11 +1,20 @@
 import { motion } from "framer-motion";
 
-export default function Frame({ label, isLoading = false, children }) {
+export default function Frame({
+  label,
+  isLoading = false,
+  children,
+  onHover = () => {},
+}) {
   // Usuń tę linię na produkcji
   // isLoading = true;
 
   return (
-    <div className="flex flex-col justify-center border-secondary border-2 rounded-[15px] pl-8 pt-6 pb-6 shadow-sm relative overflow-hidden">
+    <div
+      className="flex flex-col justify-center border-secondary border-2 rounded-[15px] pl-8 pt-6 pb-6 shadow-sm relative overflow-hidden"
+      onMouseEnter={onHover}
+      onMouseLeave={() => onHover(false)}
+    >
       <span className="text-accent text-base mb-4">{label}</span>
 
       {isLoading ? (
