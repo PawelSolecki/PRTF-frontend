@@ -21,13 +21,31 @@ export default function PortfolioPage() {
     },
   });
 
+  const {
+    data: portfolioSummary,
+    isLoading: isSummaryLoading,
+    refetch: refetchSummary,
+  } = useApi({
+    url: `http://localhost:8090/api/v1/portfolio/${portfolioId}/summary?currency=PLN`,
+    customMessages: {
+      500: "Błąd serwera podczas pobierania podsumowania portfolio",
+      401: "Brak autoryzacji do pobrania podsumowania portfolio",
+      default: "Nie udało się pobrać podsumowania portfolio",
+    },
+  });
+
   useEffect(() => {
     refetch();
+    refetchSummary();
   }, [location.key]);
 
   return (
     <>
-      <PortfolioContent portfolio={portfolio} isLoading={isLoading} />
+      <PortfolioContent
+        portfolioSummary={portfolioSummary}
+        portfolio={portfolio}
+        isLoading={isLoading || isSummaryLoading}
+      />
 
       <Outlet />
     </>

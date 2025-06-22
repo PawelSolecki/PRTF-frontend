@@ -1,13 +1,17 @@
 import PortfolioSummary from "./PortfolioSummary";
 import PortfolioHoldings from "./PortfolioHoldings";
 import PortfolioDetails from "./PortfolioDetails";
-export default function PortfolioContent({ portfolio, isLoading }) {
+export default function PortfolioContent({
+  portfolioSummary,
+  portfolio,
+  isLoading,
+}) {
   return (
     <>
       <PortfolioSummary
         name={portfolio?.name}
-        // totalValue={portfolio?.totalValue}
-        totalValue={100}
+        totalValue={portfolioSummary?.totalValue}
+        totalCost={portfolioSummary?.totalCost}
         holdings={portfolio?.assets}
         isLoading={isLoading}
       />
