@@ -2,12 +2,17 @@ import Frame from "../UI/Frame";
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function PortfolioDetails({ allocations, isLoading }) {
   const colors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A28DFF"];
+  const navigate = useNavigate();
   const [frameHover, setFrameHover] = useState(false);
   const handleMouseEnter = (state = true) => {
     setFrameHover(state);
+  };
+  const handleEditClick = () => {
+    navigate("edit");
   };
   return (
     <section className="max-w-6xl mx-auto mt-8 px-6">
@@ -23,7 +28,7 @@ export default function PortfolioDetails({ allocations, isLoading }) {
               className="absolute top-2 right-2 z-10 cursor-pointer border border-gray-200 rounded p-1"
               size={30}
               strokeWidth={2}
-              onClick={() => alert("Edit functionality not implemented yet")}
+              onClick={handleEditClick}
             />
           )}
           <div style={{ width: "100%", height: "100%" }}>

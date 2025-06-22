@@ -29,6 +29,10 @@ import {
 import AddFunds from "./components/portfolio/AddFunds";
 
 import { action as assetAction } from "./components/portfolio/AssetDetails";
+import PortfolioEdit, {
+  loader as portfolioEditLoader,
+  action as portfolioEditAction,
+} from "./components/portfolio/PortfolioEdit";
 
 const router = createBrowserRouter([
   {
@@ -68,6 +72,12 @@ const router = createBrowserRouter([
           {
             path: "add-funds",
             element: <AddFunds />,
+          },
+          {
+            path: "edit",
+            element: <PortfolioEdit />,
+            loader: portfolioEditLoader,
+            action: portfolioEditAction,
           },
         ],
       },
