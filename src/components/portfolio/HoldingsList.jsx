@@ -4,7 +4,7 @@ import HoldingItem from "./HoldingItem";
 import AddIcon from "../../assets/AddIcon.png";
 import { Link } from "react-router-dom";
 
-export default function HoldingsList({ holdings }) {
+export default function HoldingsList({ holdings, refetch }) {
   const [expandedItemId, setExpandedItemId] = useState(null);
 
   const toggleExpand = (id) => {
@@ -23,16 +23,23 @@ export default function HoldingsList({ holdings }) {
       <table className="w-full">
         <thead className="border-b-2">
           <tr>
-            {["Nazwa", "Symbol", "Ilość", "Wartość", "Zmiana", ""].map(
-              (header) => (
-                <th
-                  key={header}
-                  className="px-6 py-4 text-left text-[13px] font-medium text-dark uppercase tracking-wider"
-                >
-                  {header}
-                </th>
-              )
-            )}
+            {[
+              "Nazwa aktywa",
+              "Ticker",
+              "Ilość",
+              "Cena za 1",
+              "Wartość ",
+              "Przychód",
+              "Przychód (%)",
+              "",
+            ].map((header) => (
+              <th
+                key={header}
+                className="px-6 py-4 text-left text-[13px] font-medium text-dark uppercase tracking-wider"
+              >
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -42,6 +49,7 @@ export default function HoldingsList({ holdings }) {
               {...holding}
               isExpanded={expandedItemId === holding.id}
               onToggleExpand={() => toggleExpand(holding.id)}
+              refetch={refetch}
             />
           ))}
         </tbody>

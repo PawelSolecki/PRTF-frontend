@@ -45,6 +45,7 @@ export default function PortfolioPage() {
         portfolioSummary={portfolioSummary}
         portfolio={portfolio}
         isLoading={isLoading || isSummaryLoading}
+        refetch={refetch}
       />
 
       <Outlet />

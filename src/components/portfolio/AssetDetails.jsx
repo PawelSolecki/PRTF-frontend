@@ -1,8 +1,8 @@
 import { useInput } from "../../hooks/useInput";
 import { isNotEmpty } from "../../utils/validation";
 import { Form, redirect } from "react-router-dom";
+import { useState, useEffect } from "react";
 
-// Helper component for details display/edit
 const DetailItem = ({
   label,
   value,
@@ -88,14 +88,43 @@ export default function AssetDetails({ asset, isEditing, formId }) {
     hasError: currencyHasError,
   } = useInput(asset.currency, isNotEmpty);
 
+  // Quantity is read-only, calculated from transaction history
+  const quantity = asset.totalQuantity || 0;
+
+  // Editable state for pricePerUnit and totalValue
+  const [pricePerUnit, setPricePerUnit] = useState(asset.pricePerUnit || 0);
+  const [totalValue, setTotalValue] = useState(
+    quantity * (asset.pricePerUnit || 0)
+  );
+
+  // When pricePerUnit changes, update totalValue
+  useEffect(() => {
+    setTotalValue(Number(quantity) * Number(pricePerUnit));
+  }, [quantity, pricePerUnit]);
+
+  // When totalValue changes, update pricePerUnit (if user changed totalValue)
+  const handleTotalValueChange = (e) => {
+    const newTotalValue = e.target.value;
+    setTotalValue(newTotalValue);
+    // Avoid division by zero
+    if (Number(quantity) !== 0) {
+      setPricePerUnit(Number(newTotalValue) / Number(quantity));
+    }
+  };
+
+  // When pricePerUnit changes, update totalValue
+  const handlePricePerUnitChange = (e) => {
+    const newPrice = e.target.value;
+    setPricePerUnit(newPrice);
+    setTotalValue(Number(quantity) * Number(newPrice));
+  };
+
   return (
     <form
       id={formId}
       className="bg-white p-4 rounded-lg shadow-sm"
       onClick={(e) => e.stopPropagation()}
-      onSubmit={(e) => {
-        e.preventDefault();
-      }}
+      method="post"
     >
       {/* Dodaj ukryte pole z ID aktywa, aby było dostępne w akcji */}
       <input type="hidden" name="assetId" value={asset.id} />
@@ -111,7 +140,6 @@ export default function AssetDetails({ asset, isEditing, formId }) {
           hasError={nameHasError}
           required={true}
         />
-
         <DetailItem
           label="Ticker"
           value={tickerValue}
@@ -120,7 +148,6 @@ export default function AssetDetails({ asset, isEditing, formId }) {
           onChange={handleTickerChange}
           onBlur={handleTickerBlur}
         />
-
         <DetailItem
           label="Typ"
           value={typeValue}
@@ -131,7 +158,6 @@ export default function AssetDetails({ asset, isEditing, formId }) {
           hasError={typeHasError}
           required={true}
         />
-
         <DetailItem
           label="Rynek"
           value={marketValue}
@@ -140,7 +166,6 @@ export default function AssetDetails({ asset, isEditing, formId }) {
           onChange={handleMarketChange}
           onBlur={handleMarketBlur}
         />
-
         <DetailItem
           label="Broker"
           value={brokerValue}
@@ -151,7 +176,6 @@ export default function AssetDetails({ asset, isEditing, formId }) {
           hasError={brokerHasError}
           required={true}
         />
-
         <DetailItem
           label="Waluta"
           value={currencyValue}
@@ -162,22 +186,39 @@ export default function AssetDetails({ asset, isEditing, formId }) {
           hasError={currencyHasError}
           required={true}
         />
-
         {!isEditing && (
-          <>
-            <DetailItem
-              label="Ilość"
-              value={asset.totalQuantity}
-              isEditing={false}
-            />
-            <DetailItem
-              label="Cena jednostkowa"
-              value={`${asset.pricePerUnit} ${asset.currency}`}
-              isEditing={false}
-            />
-          </>
+          <DetailItem
+            label="Ilość"
+            value={quantity}
+            isEditing={false}
+            name="totalQuantity"
+          />
         )}
+        <DetailItem
+          label="Cena jednostkowa"
+          value={pricePerUnit}
+          isEditing={isEditing}
+          name="pricePerUnit"
+          onChange={handlePricePerUnitChange}
+          required={true}
+        />
+        <DetailItem
+          label="Wartość całkowita"
+          value={totalValue}
+          isEditing={isEditing}
+          name="totalValue"
+          onChange={handleTotalValueChange}
+          required={true}
+        />
       </div>
+      {/* Hidden fields for PATCH */}
+      <input type="hidden" name="name" value={nameValue} />
+      <input type="hidden" name="ticker" value={tickerValue} />
+      <input type="hidden" name="type" value={typeValue} />
+      <input type="hidden" name="market" value={marketValue} />
+      <input type="hidden" name="broker" value={brokerValue} />
+      <input type="hidden" name="currency" value={currencyValue} />
+      <input type="hidden" name="pricePerUnit" value={pricePerUnit} />
     </form>
   );
 }
@@ -203,16 +244,37 @@ export async function loader({ params }) {
   return response.json();
 }
 
-// Action to update asset data
 export async function action({ request, params }) {
-  console.log("Form data asset update PATCH request received");
   const formData = await request.formData();
+  const data = Object.fromEntries(formData);
 
-  // Wypisz wszystkie dane formularza
-  const formDataObj = Object.fromEntries(formData);
-  console.log("Form data:", formDataObj);
+  const payload = {
+    type: data.type,
+    name: data.name,
+    broker: data.broker,
+    pricePerUnit: Number(data.pricePerUnit),
+    currency: data.currency,
+    market: data.market,
+    ticker: data.ticker,
+  };
 
-  // W przyszłości tutaj dodasz kod do wysyłania danych do API
+  const response = await fetch(
+    `http://localhost:8090/api/v1/asset/${params.assetId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        credentials: "include",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
 
+  if (!response.ok) {
+    throw new Response(
+      JSON.stringify({ message: "Nie udało się zaktualizować aktywa" }),
+      { status: 400 }
+    );
+  }
   return null;
 }

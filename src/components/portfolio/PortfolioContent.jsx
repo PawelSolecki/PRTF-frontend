@@ -5,6 +5,7 @@ export default function PortfolioContent({
   portfolioSummary,
   portfolio,
   isLoading,
+  refetch,
 }) {
   return (
     <>
@@ -19,7 +20,7 @@ export default function PortfolioContent({
         allocations={portfolio?.allocations}
         isLoading={isLoading}
       />
-      <PortfolioHoldings holdings={portfolio?.assets} />
+      <PortfolioHoldings holdings={portfolio?.assets} refetch={refetch} />
     </>
   );
 }

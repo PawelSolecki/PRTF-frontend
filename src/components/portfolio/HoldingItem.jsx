@@ -8,6 +8,7 @@ export default function HoldingItem({
   ticker,
   totalQuantity,
   pricePerUnit,
+  totalCost,
   id,
   currency,
   type,
@@ -15,8 +16,9 @@ export default function HoldingItem({
   market,
   isExpanded,
   onToggleExpand,
+  refetch,
 }) {
-  const isPositive = true;
+  const isPositive = totalCost < totalQuantity * pricePerUnit;
   const [isEditing, setIsEditing] = useState(false);
   const assetFetcher = useFetcher();
   const transactionFetcher = useFetcher();
@@ -59,6 +61,14 @@ export default function HoldingItem({
     setIsEditing(false);
   };
 
+  useEffect(() => {
+    if (assetFetcher.state === "idle" && isEditing) {
+      refetch();
+      setIsEditing(false);
+    }
+    // eslint-disable-next-line
+  }, [assetFetcher.state]);
+
   const handleSubmitAssetForm = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -90,9 +100,6 @@ export default function HoldingItem({
         transactionFetcher.load(`/api/transactions/asset/${id}`);
       }, 300);
     }
-
-    // 3. Wyjdź z trybu edycji
-    setIsEditing(false);
   };
 
   // Pobierz liczbę zaznaczonych transakcji dla widoku
@@ -113,7 +120,6 @@ export default function HoldingItem({
 
   return (
     <>
-      {/* Pierwszy wiersz tabeli - bez zmian */}
       <tr
         className={`hover:bg-basic-100 cursor-pointer ${
           isExpanded ? "bg-basic-100" : ""
@@ -134,12 +140,29 @@ export default function HoldingItem({
         <td className="px-6 py-4 whitespace-nowrap text-sm text-accent">
           {pricePerUnit} {currency}
         </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-accent">
+          {totalQuantity * pricePerUnit} {currency}
+        </td>
         <td
           className={`px-6 py-4 whitespace-nowrap text-sm ${
             isPositive ? "text-green-600" : "text-red-600"
           }`}
         >
-          0.0
+          {isPositive ? "+" : "-"}
+          {totalQuantity * pricePerUnit - totalCost} {currency}
+        </td>
+        <td
+          className={`px-6 py-4 whitespace-nowrap text-sm ${
+            isPositive ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          {isPositive
+            ? `+${
+                ((totalQuantity * pricePerUnit - totalCost) / totalCost) * 100
+              }%`
+            : `${
+                ((totalQuantity * pricePerUnit - totalCost) / totalCost) * 100
+              }%`}
         </td>
         <td
           className="px-6 py-4 whitespace-nowrap text-sm space-x-4"
@@ -160,7 +183,7 @@ export default function HoldingItem({
 
       {isExpanded && (
         <tr className="bg-gray-50">
-          <td colSpan="6" className="px-6 py-4">
+          <td colSpan="8" className="px-6 py-4">
             <div className="grid grid-cols-2 gap-8">
               {/* Asset Details */}
               <div>
