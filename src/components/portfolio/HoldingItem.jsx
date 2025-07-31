@@ -138,10 +138,10 @@ export default function HoldingItem({
           {totalQuantity}
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-accent">
-          {pricePerUnit} {currency}
+          {pricePerUnit.toFixed(2)} {currency}
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-accent">
-          {totalQuantity * pricePerUnit} {currency}
+          {(totalQuantity * pricePerUnit).toFixed(2)} {currency}
         </td>
         <td
           className={`px-6 py-4 whitespace-nowrap text-sm ${
@@ -149,7 +149,7 @@ export default function HoldingItem({
           }`}
         >
           {isPositive ? "+" : "-"}
-          {totalQuantity * pricePerUnit - totalCost} {currency}
+          {(totalQuantity * pricePerUnit - totalCost).toFixed(2)} {currency}
         </td>
         <td
           className={`px-6 py-4 whitespace-nowrap text-sm ${
@@ -157,12 +157,14 @@ export default function HoldingItem({
           }`}
         >
           {isPositive
-            ? `+${
-                ((totalQuantity * pricePerUnit - totalCost) / totalCost) * 100
-              }%`
-            : `${
-                ((totalQuantity * pricePerUnit - totalCost) / totalCost) * 100
-              }%`}
+            ? `+${(
+                ((totalQuantity * pricePerUnit - totalCost) / totalCost) *
+                100
+              ).toFixed(2)}%`
+            : `${(
+                ((totalQuantity * pricePerUnit - totalCost) / totalCost) *
+                100
+              ).toFixed(2)}%`}
         </td>
         <td
           className="px-6 py-4 whitespace-nowrap text-sm space-x-4"
