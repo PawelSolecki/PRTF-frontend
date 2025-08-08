@@ -1,10 +1,10 @@
-import Modal from "../UI/Modal";
-import { useInput } from "../../hooks/useInput";
-import Input from "../UI/Input";
-import { useNavigate, useParams } from "react-router-dom";
-import { useApi } from "../../hooks/useApi";
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useApi } from "../../hooks/useApi";
+import { useInput } from "../../hooks/useInput";
+import Input from "../UI/Input";
+import Modal from "../UI/Modal";
 
 export default function AddFunds() {
   const navigate = useNavigate();

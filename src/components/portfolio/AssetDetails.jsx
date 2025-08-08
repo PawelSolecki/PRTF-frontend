@@ -1,7 +1,6 @@
+import { useEffect, useState } from "react";
 import { useInput } from "../../hooks/useInput";
 import { isNotEmpty } from "../../utils/validation";
-import { Form, redirect } from "react-router-dom";
-import { useState, useEffect } from "react";
 
 const DetailItem = ({
   label,

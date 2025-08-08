@@ -1,6 +1,6 @@
+import { redirect, useNavigate, useParams } from "react-router-dom";
 import Modal from "../UI/Modal";
 import TransactionForm from "./TransactionForm";
-import { redirect, useNavigate, useParams } from "react-router-dom";
 
 export default function HoldingTransaction() {
   const navigate = useNavigate();

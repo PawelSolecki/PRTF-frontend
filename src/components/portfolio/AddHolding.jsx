@@ -1,7 +1,6 @@
 import { Link, redirect, useNavigate, useParams } from "react-router-dom";
 import Modal from "../UI/Modal.jsx";
 import HoldingForm from "./HoldingForm.jsx";
-import { useApi } from "../../hooks/useApi.js";
 
 export default function AddHolding() {
   const navigate = useNavigate();

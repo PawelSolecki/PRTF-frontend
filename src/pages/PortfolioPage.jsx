@@ -1,8 +1,8 @@
+import { useEffect } from "react";
 import { Outlet, useParams } from "react-router";
+import { useLocation } from "react-router-dom";
 import PortfolioContent from "../components/portfolio/PortfolioContent";
 import { useApi } from "../hooks/useApi";
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 
 export default function PortfolioPage() {
   const { portfolioId } = useParams();

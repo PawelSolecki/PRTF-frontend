@@ -1,8 +1,13 @@
-import { useNavigate, useParams, useLoaderData, Form } from "react-router-dom";
-import Modal from "../UI/Modal";
-import Input from "../UI/Input";
+import {
+  Form,
+  redirect,
+  useLoaderData,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { useInput } from "../../hooks/useInput";
-import { redirect } from "react-router-dom";
+import Input from "../UI/Input";
+import Modal from "../UI/Modal";
 
 //TODO: Styles
 export default function PortfolioEdit() {
