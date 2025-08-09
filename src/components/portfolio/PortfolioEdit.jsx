@@ -5,6 +5,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { useInput } from "../../hooks/useInput";
 import Input from "../UI/Input";
 import Modal from "../UI/Modal";
@@ -14,6 +15,7 @@ export default function PortfolioEdit() {
   const navigate = useNavigate();
   const { portfolioId } = useParams();
   const assetTypes = useLoaderData();
+  const { accessToken } = useAuth();
 
   const {
     value: percentages,
@@ -60,6 +62,10 @@ export default function PortfolioEdit() {
         method="post"
         className="w-full max-w-3xl mx-auto bg-white rounded-lg p-6"
       >
+        {/* Ukryte pole z tokenem */}
+        {accessToken && (
+          <input type="hidden" name="accessToken" value={accessToken} />
+        )}
         <h1 className="text-xl font-bold text-accent mb-4 text-center">
           Edytuj portfel modelowy
         </h1>
@@ -144,8 +150,14 @@ export async function action({ request, params }) {
   const { portfolioId } = params;
   const formData = await request.formData();
 
+  // Pobierz token z formData
+  const accessToken = formData.get("accessToken");
+
   const allocations = [];
   for (const [assetType, value] of formData.entries()) {
+    // Pomiń pole z tokenem
+    if (assetType === "accessToken") continue;
+
     const percentage = Number(value);
     if (percentage !== 0) {
       allocations.push({
@@ -156,13 +168,20 @@ export async function action({ request, params }) {
   }
   console.log("Allocations to save:", allocations);
 
+  // Przygotuj nagłówki z tokenem
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
   const response = await fetch(
     `http://localhost:8090/api/v1/portfolio-allocation/${portfolioId}`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       credentials: "include",
       body: JSON.stringify({ allocations }),
     }

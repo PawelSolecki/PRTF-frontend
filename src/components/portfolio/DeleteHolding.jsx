@@ -1,12 +1,44 @@
-import { Form, redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { Form, redirect, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { useApi } from "../../hooks/useApi.js";
 import Modal from "../UI/Modal";
 
 export default function DeleteHolding() {
-  const holding = useLoaderData();
   const navigate = useNavigate();
+  const { holdingId } = useParams();
+  const { accessToken } = useAuth();
+
+  const {
+    data: holding,
+    isLoading,
+    error,
+  } = useApi({
+    url: `http://localhost:8090/api/v1/asset/${holdingId}`,
+    queryKey: ["asset", holdingId],
+  });
 
   function handleClose() {
     navigate("..");
+  }
+
+  if (isLoading) {
+    return (
+      <Modal onClose={handleClose}>
+        <div className="flex justify-center">
+          <p>Ładowanie...</p>
+        </div>
+      </Modal>
+    );
+  }
+
+  if (error || !holding) {
+    return (
+      <Modal onClose={handleClose}>
+        <div className="flex justify-center">
+          <p>Błąd ładowania danych aktywa</p>
+        </div>
+      </Modal>
+    );
   }
 
   return (
@@ -34,6 +66,10 @@ export default function DeleteHolding() {
             Anuluj
           </button>
           <Form method="delete">
+            {/* Ukryte pole z tokenem */}
+            {accessToken && (
+              <input type="hidden" name="accessToken" value={accessToken} />
+            )}
             <button
               type="submit"
               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
@@ -47,33 +83,27 @@ export default function DeleteHolding() {
   );
 }
 
-export async function loader({ params }) {
-  const response = await fetch(
-    `http://localhost:8090/api/v1/asset/${params.holdingId}`,
-    {
-      credentials: "include",
-    }
-  );
+export async function action({ request, params }) {
+  const formData = await request.formData();
 
-  if (!response.ok) {
-    throw new Response(
-      JSON.stringify({ message: "Nie udało się pobrać danych aktywa" }),
-      { status: 404 }
-    );
+  // Pobierz token z formData
+  const accessToken = formData.get("accessToken");
+
+  // Przygotuj nagłówki z tokenem
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
-  return response.json();
-}
-
-export async function action({ request, params }) {
   const assetsResponse = await fetch(
     `http://localhost:8090/api/v1/asset/${params.holdingId}`,
     {
       method: "DELETE",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
     }
   );
 

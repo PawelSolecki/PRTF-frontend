@@ -1,9 +1,9 @@
+import { Form } from "react-router-dom";
 import { useInput } from "../../hooks/useInput";
 import { isNotEmpty } from "../../utils/validation";
 import Input from "../UI/Input";
-import { Form } from "react-router-dom";
 
-export default function TransactionForm({ children, action }) {
+export default function TransactionForm({ children, action, accessToken }) {
   const {
     value: transactionType,
     handleInputChange: handleTransactionTypeChange,
@@ -40,6 +40,10 @@ export default function TransactionForm({ children, action }) {
         </span>
 
         <Form method="post" action={action} className="space-y-6">
+          {/* Ukryte pole z tokenem */}
+          {accessToken && (
+            <input type="hidden" name="accessToken" value={accessToken} />
+          )}
           {/* First row - Type and Date side by side */}
           <div className="grid grid-cols-2 gap-4">
             <div>

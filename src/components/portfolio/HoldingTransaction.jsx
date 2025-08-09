@@ -1,10 +1,12 @@
 import { redirect, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
 import Modal from "../UI/Modal";
 import TransactionForm from "./TransactionForm";
 
 export default function HoldingTransaction() {
   const navigate = useNavigate();
   const { portfolioId } = useParams();
+  const { accessToken } = useAuth();
 
   function handleClose() {
     navigate(`/portfolio/${portfolioId}`);
@@ -12,7 +14,7 @@ export default function HoldingTransaction() {
 
   return (
     <Modal onClose={handleClose}>
-      <TransactionForm action="">
+      <TransactionForm action="" accessToken={accessToken}>
         <button
           type="button"
           onClick={handleClose}
@@ -39,6 +41,9 @@ export async function action({ request, params }) {
   const formData = await request.formData();
   const { holdingId, portfolioId } = params;
 
+  // Pobierz token z formData
+  const accessToken = formData.get("accessToken");
+
   const transactionData = {
     type: formData.get("transactionType"),
     quantity: parseFloat(formData.get("quantity")),
@@ -47,13 +52,20 @@ export async function action({ request, params }) {
     assetId: holdingId,
   };
 
+  // Przygotuj nagłówki z tokenem
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
   // API call to add a transaction
   const response = await fetch(`http://localhost:8090/api/v1/transaction`, {
     method: "POST",
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     body: JSON.stringify(transactionData),
   });
 

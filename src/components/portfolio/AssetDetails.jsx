@@ -45,7 +45,12 @@ const DetailItem = ({
 };
 
 // Asset details display and edit component
-export default function AssetDetails({ asset, isEditing, formId }) {
+export default function AssetDetails({
+  asset,
+  isEditing,
+  formId,
+  accessToken,
+}) {
   // Use useInput hook for each field with validation
   const {
     value: nameValue,
@@ -127,6 +132,10 @@ export default function AssetDetails({ asset, isEditing, formId }) {
     >
       {/* Dodaj ukryte pole z ID aktywa, aby było dostępne w akcji */}
       <input type="hidden" name="assetId" value={asset.id} />
+      {/* Ukryte pole z tokenem */}
+      {accessToken && (
+        <input type="hidden" name="accessToken" value={accessToken} />
+      )}
 
       <div className="grid grid-cols-2 gap-4">
         <DetailItem
@@ -247,6 +256,9 @@ export async function action({ request, params }) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
 
+  // Pobierz token z formData
+  const accessToken = data.accessToken;
+
   const payload = {
     type: data.type,
     name: data.name,
@@ -257,14 +269,21 @@ export async function action({ request, params }) {
     ticker: data.ticker,
   };
 
+  // Przygotuj nagłówki z tokenem
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
   const response = await fetch(
     `http://localhost:8090/api/v1/asset/${params.assetId}`,
     {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        credentials: "include",
-      },
+      headers,
+      credentials: "include",
       body: JSON.stringify(payload),
     }
   );

@@ -1,10 +1,12 @@
 import { Link, redirect, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
 import Modal from "../UI/Modal.jsx";
 import HoldingForm from "./HoldingForm.jsx";
 
 export default function AddHolding() {
   const navigate = useNavigate();
-  const { portfolioId } = useParams(); // Dodaj to
+  const { portfolioId } = useParams();
+  const { accessToken } = useAuth();
 
   function handleClose() {
     // Jawne określenie docelowej ścieżki
@@ -13,7 +15,10 @@ export default function AddHolding() {
 
   return (
     <Modal onClose={handleClose}>
-      <HoldingForm action={`/portfolio/${portfolioId}/add`}>
+      <HoldingForm
+        action={`/portfolio/${portfolioId}/add`}
+        accessToken={accessToken}
+      >
         <Link to={`/portfolio/${portfolioId}`}>Anuluj</Link>
         <button type="submit">Potwierdz</button>
       </HoldingForm>
@@ -26,6 +31,9 @@ export async function action({ request, params }) {
   console.log("action", params);
   const data = await request.formData();
 
+  // Pobierz token z formData
+  const accessToken = data.get("accessToken");
+
   const assetData = {
     portfolioId: params.portfolioId,
     type: data.get("type"),
@@ -37,12 +45,19 @@ export async function action({ request, params }) {
     ticker: data.get("ticker"),
   };
 
+  // Przygotuj nagłówki z tokenem
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
   const assetsResponse = await fetch(`http://localhost:8090/api/v1/asset`, {
     method: "POST",
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     body: JSON.stringify(assetData),
   });
   console.log("assetsResponse", assetsResponse);
@@ -67,13 +82,10 @@ export async function action({ request, params }) {
   };
   const transactionsResponse = await fetch(
     `http://localhost:8090/api/v1/transaction`,
-
     {
       method: "POST",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(transactionData),
     }
   );

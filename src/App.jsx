@@ -1,37 +1,31 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import RootPage from "./pages/RootPage";
-import ErrorPage from "./pages/ErrorPage";
-import HomePage from "./pages/HomePage";
-import PortfolioPage from "./pages/PortfolioPage";
-import LoginPage from "./pages/LoginPage";
 import AddHolding, {
-  loader as addHoldingLoader,
   action as addHoldingAction,
 } from "./components/portfolio/AddHolding";
 import DeleteHolding, {
-  loader as deleteHoldingLoader,
   action as deleteHoldingAction,
 } from "./components/portfolio/DeleteHolding";
 import HoldingInfo, {
-  loader as holdingInfoLoader,
   action as holdingInfoAction,
+  loader as holdingInfoLoader,
 } from "./components/portfolio/HoldingInfo";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import PortfolioPage from "./pages/PortfolioPage";
+import RootPage from "./pages/RootPage";
 
 import HoldingTransaction, {
   action as transactionAction,
 } from "./components/portfolio/HoldingTransaction";
 
-import {
-  loader as transactionLoader,
-  action as transactionDeleteAction,
-} from "./components/portfolio/TransactionHistory";
+import { action as transactionDeleteAction } from "./components/portfolio/TransactionHistory";
 
 import AddFunds from "./components/portfolio/AddFunds";
 
 import { action as assetAction } from "./components/portfolio/AssetDetails";
 import PortfolioEdit, {
-  loader as portfolioEditLoader,
   action as portfolioEditAction,
+  loader as portfolioEditLoader,
 } from "./components/portfolio/PortfolioEdit";
 
 const router = createBrowserRouter([
@@ -67,7 +61,6 @@ const router = createBrowserRouter([
             path: "delete/:holdingId",
             element: <DeleteHolding />,
             action: deleteHoldingAction,
-            loader: deleteHoldingLoader,
           },
           {
             path: "add-funds",
@@ -90,7 +83,6 @@ const router = createBrowserRouter([
   },
   {
     path: "/api/transactions/asset/:assetId",
-    loader: transactionLoader,
   },
 
   {

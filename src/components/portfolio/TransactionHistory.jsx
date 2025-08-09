@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function TransactionHistory({
   assetId,
   currency,
   isEditing,
-  fetcher,
-  transactionsFormId, // Dodaj identyfikator formularza
+  transactionsFormId,
+  transactions = [], // Otrzymaj transakcje z rodzica
+  isLoading = false, // Otrzymaj stan ładowania z rodzica
 }) {
   const [markedForDeletion, setMarkedForDeletion] = useState({});
-
-  const transactions = fetcher.data || [];
-  const isLoading = fetcher.state === "loading";
+  const { accessToken } = useAuth();
 
   // Reset marked items when editing mode changes
   useEffect(() => {
@@ -46,6 +46,10 @@ export default function TransactionHistory({
 
   return (
     <form id={transactionsFormId} className="transactions-form">
+      {/* Ukryte pole z tokenem */}
+      {accessToken && (
+        <input type="hidden" name="accessToken" value={accessToken} />
+      )}
       {/* Dodaj ukryte pola dla wszystkich zaznaczonych transakcji */}
       {transactionsToDelete.map((transactionId) => (
         <input
@@ -150,34 +154,24 @@ export default function TransactionHistory({
   );
 }
 
-// Loader to fetch transaction data
-export async function loader({ params }) {
-  console.log("Fetching transactions for assetId:", params.assetId);
-  const response = await fetch(
-    `http://localhost:8090/api/v1/transaction/asset/${params.assetId}`,
-    {
-      credentials: "include",
-    }
-  );
-
-  if (!response.ok) {
-    throw new Response(
-      JSON.stringify({ message: "Nie udało się załadować transakcji" }),
-      {
-        status: 404,
-      }
-    );
-  }
-
-  return response.json();
-}
-
 // Action zmodyfikowany do obsługi wielu transakcji
 export async function action({ request, params }) {
   const formData = await request.formData();
   const transactionIds = formData.getAll("transactionIds[]");
 
+  // Pobierz token z formData
+  const accessToken = formData.get("accessToken");
+
   console.log("Deleting transactions:", transactionIds);
+
+  // Przygotuj nagłówki z tokenem
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
 
   const results = [];
 
@@ -189,6 +183,7 @@ export async function action({ request, params }) {
         {
           method: "DELETE",
           credentials: "include",
+          headers,
         }
       );
 

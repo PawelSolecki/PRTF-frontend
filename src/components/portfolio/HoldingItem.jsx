@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useFetcher } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { useApi } from "../../hooks/useApi.js";
 import AssetDetails from "./AssetDetails";
 import TransactionHistory from "./TransactionHistory";
 
@@ -18,25 +20,32 @@ export default function HoldingItem({
   onToggleExpand,
   refetch,
 }) {
+  const { accessToken } = useAuth();
   const isPositive = totalCost < totalQuantity * pricePerUnit;
   const [isEditing, setIsEditing] = useState(false);
   const assetFetcher = useFetcher();
-  const transactionFetcher = useFetcher();
   const deleteFetcher = useFetcher();
 
+  // Pobierz transakcje w rodzicu
+  const { data: transactions = [], isLoading: transactionsLoading } = useApi({
+    url: `http://localhost:8090/api/v1/transaction/asset/${id}`,
+    queryKey: ["transactions", id],
+    enabled: isExpanded && !!accessToken, // Pobierz tylko gdy rozwinięte i token dostępny
+  });
+
   // useEffect pozostaje bez zmian
-  useEffect(() => {
-    if (
-      isExpanded &&
-      (!transactionFetcher.data || transactionFetcher.state === "idle")
-    ) {
-      // Używamy funkcji pomocniczej aby uniknąć dodania transactionFetcher do zależności
-      const loadTransactions = () => {
-        transactionFetcher.load(`/api/transactions/asset/${id}`);
-      };
-      loadTransactions();
-    }
-  }, [isExpanded, id]);
+  // useEffect(() => {
+  //   if (
+  //     isExpanded &&
+  //     (!transactionFetcher.data || transactionFetcher.state === "idle")
+  //   ) {
+  //     // Używamy funkcji pomocniczej aby uniknąć dodania transactionFetcher do zależności
+  //     const loadTransactions = () => {
+  //       transactionFetcher.load(`/api/transactions/asset/${id}`);
+  //     };
+  //     loadTransactions();
+  //   }
+  // }, [isExpanded, id]);
 
   // Asset data including fetched transactions is passed from parent
   const asset = {
@@ -96,9 +105,9 @@ export default function HoldingItem({
       });
 
       // Odśwież listę transakcji po usunięciu
-      setTimeout(() => {
-        transactionFetcher.load(`/api/transactions/asset/${id}`);
-      }, 300);
+      // setTimeout(() => {
+      //   transactionFetcher.load(`/api/transactions/asset/${id}`);
+      // }, 300);
     }
   };
 
@@ -196,6 +205,7 @@ export default function HoldingItem({
                   asset={asset}
                   isEditing={isEditing}
                   formId={`asset-form-${id}`}
+                  accessToken={accessToken}
                 />
               </div>
 
@@ -208,8 +218,9 @@ export default function HoldingItem({
                   assetId={id}
                   currency={currency}
                   isEditing={isEditing}
-                  fetcher={transactionFetcher}
                   transactionsFormId={`transactions-form-${id}`}
+                  transactions={transactions}
+                  isLoading={transactionsLoading}
                 />
               </div>
             </div>

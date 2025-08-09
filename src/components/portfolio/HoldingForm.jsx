@@ -1,9 +1,9 @@
+import { Form } from "react-router-dom";
 import { useInput } from "../../hooks/useInput";
 import { isNotEmpty } from "../../utils/validation";
 import Input from "../UI/Input";
-import { Form } from "react-router-dom";
 
-export default function HoldingForm({ action, children }) {
+export default function HoldingForm({ action, children, accessToken }) {
   const {
     value: nameValue,
     handleInputChange: handleNameChange,
@@ -66,6 +66,10 @@ export default function HoldingForm({ action, children }) {
     <>
       <h1 className="text-2xl font-semibold mb-6">Dodaj nowe aktywo</h1>
       <Form method="post" action={action} className="space-y-6">
+        {/* Ukryte pole z tokenem */}
+        {accessToken && (
+          <input type="hidden" name="accessToken" value={accessToken} />
+        )}
         <div className="grid grid-cols-2 gap-4">
           <Input
             label="Nazwa *"

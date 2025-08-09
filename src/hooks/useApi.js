@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
 
 const fetchWithToken = async ({
@@ -23,7 +23,8 @@ const fetchWithToken = async ({
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
-    credentials: "include",
+    // Użyj credentials tylko gdy nie ma tokenu JWT
+    ...(requiresAuth && accessToken ? {} : { credentials: "include" }),
     ...options,
   });
 
